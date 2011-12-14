@@ -10,7 +10,6 @@ import java.awt.*;
  * User: John van Weel
  * Date: 12/12/11
  * Time: 3:33 PM
- *
  */
 public class Particle {
     private final int x;
@@ -49,6 +48,7 @@ public class Particle {
     }
 
     public void render(Graphics g) {
-        g.fillRect(getX()-2, getY()-2,2, 2);
+        g.setColor(new Color(0, 0, 0));
+        g.fillRect(getX() - 2, getY() - 2, 2, 2);
     }
 }

@@ -4,7 +4,6 @@ import nl.johnvanweel.particlefilters.actor.sensor.ISensor;
 import nl.johnvanweel.particlefilters.actor.sensor.data.SensorData;
 import nl.johnvanweel.particlefilters.ui.WorldPanel;
 import org.springframework.beans.factory.annotation.Autowired;
-import sun.management.Sensor;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
@@ -25,6 +24,8 @@ public class ParticleAgent implements IAgent {
     public static final int HEIGHT = 460;
     private List<Particle> particleList = new ArrayList<>();
 
+    private final Random random = new Random();
+
     @Autowired
     private WorldPanel panel;
 
@@ -44,20 +45,14 @@ public class ParticleAgent implements IAgent {
 
     private List<Particle> seedRandomParticles() {
         List<Particle> particles = new ArrayList<>();
-        Random r = new Random();
         for (int i = 0; i < amountOfParticles; i++) {
-            int x = r.nextInt(WIDTH);
-            int y = r.nextInt(HEIGHT);
-
-            Particle p = new Particle(x, y, Double.valueOf((double) 1 / amountOfParticles));
-            particles.add(p);
+            particles.add(createRandomParticle((double) 1 / amountOfParticles));
         }
 
         return particles;
     }
 
     public void render(Graphics g) {
-        g.setColor(Color.BLACK);
         for (Particle p : particleList) {
             p.render(g);
         }
@@ -69,14 +64,18 @@ public class ParticleAgent implements IAgent {
             double eta = calculateEta(sensorData);
             List<Particle> particleListPrime = predictSuccessorStates(dX, dY);
             computeWeights(sensorData, eta, particleListPrime);
-            particleListPrime = sample(particleListPrime);
+            particleListPrime = sampleNewParticleList(particleListPrime);
 
-            particleList.clear();
-            particleList.addAll(particleListPrime);
+            replaceParticles(particleListPrime);
         }
     }
 
-    private List<Particle> sample(List<Particle> particleListPrime) {
+    private void replaceParticles(List<Particle> particleListPrime) {
+        particleList.clear();
+        particleList.addAll(particleListPrime);
+    }
+
+    private List<Particle> sampleNewParticleList(List<Particle> particleListPrime) {
         List<Particle> newList = new ArrayList<>();
 
         for (int i = 0; i < particleListPrime.size(); i++) {
@@ -88,7 +87,7 @@ public class ParticleAgent implements IAgent {
     }
 
     private Particle pickParticle(List<Particle> particleListPrime) {
-        Double pick = new Random().nextDouble();
+        Double pick = random.nextDouble();
 
         double accum = 0D;
         for (Particle p : particleListPrime) {
@@ -106,16 +105,20 @@ public class ParticleAgent implements IAgent {
         while (particleIterator.hasNext()) {
             Particle p = particleIterator.next();
 
-            double z;
-            z = 0;
-            for (SensorData d : sensorData) {
-                for (ISensor s : sensors) {
-                    z += d.matchesWith(s.poll(p.getX(), p.getY()));
-                }
-            }
+            double z = normalizeSensorData(sensorData, p);
 
-            p.setWeight(((z/sensors.length) / eta));
+            p.setWeight(((z / sensors.length) / eta));
         }
+    }
+
+    private double normalizeSensorData(SensorData[] sensorData, Particle p) {
+        double z = 0.0D;
+        for (SensorData d : sensorData) {
+            for (ISensor s : sensors) {
+                z += d.matchesWith(s.poll(p.getX(), p.getY()));
+            }
+        }
+        return z;
     }
 
     private List<Particle> predictSuccessorStates(int dX, int dY) {
@@ -123,10 +126,10 @@ public class ParticleAgent implements IAgent {
         for (int i = 0; i < particleList.size(); i++) {
             Particle p = particleList.get(i);
 
-            Particle pPrime = new Particle(p.getX() + dX + (new Random().nextInt(10) - 5), p.getY() + (new Random().nextInt(10) - 5) + dY, p.getWeight());
+            Particle pPrime = new Particle(p.getX() + dX + (random.nextInt(10) - 5), p.getY() + (random.nextInt(10) - 5) + dY, p.getWeight());
 
-            if (pPrime.getX() > WIDTH+WIDTH/10 || pPrime.getY() > HEIGHT+ HEIGHT/10){
-                pPrime = new Particle(new Random().nextInt(WIDTH), new Random().nextInt(HEIGHT), p.getWeight());
+            if (isParticleOutOfArea(pPrime)) {
+                pPrime = createRandomParticle(p.getWeight());
             }
 
             particleListPrime.add(pPrime);
@@ -135,18 +138,20 @@ public class ParticleAgent implements IAgent {
         return particleListPrime;
     }
 
+    private Particle createRandomParticle(double weight) {
+        Particle p = new Particle(random.nextInt(WIDTH), random.nextInt(HEIGHT), weight);
+        return p;
+    }
+
+    private boolean isParticleOutOfArea(Particle pPrime) {
+        return pPrime.getX() > WIDTH + WIDTH / 10 || pPrime.getY() > HEIGHT + HEIGHT / 10;
+    }
+
     private double calculateEta(SensorData[] sensorData) {
         double eta = 0D;
         for (Particle p : particleList) {
-            eta = getParticleSensorData(sensorData, eta, p);
+            eta += normalizeSensorData(sensorData, p);
         }
         return eta / sensors.length;
-    }private double getParticleSensorData(SensorData[] sensorData, double eta, Particle p) {
-    for (SensorData d : sensorData) {
-                for (ISensor s : sensors) {
-                    eta += d.matchesWith(s.poll(p.getX(), p.getY()));
-                }
-            }return eta;}
-
-
+    }
 }
