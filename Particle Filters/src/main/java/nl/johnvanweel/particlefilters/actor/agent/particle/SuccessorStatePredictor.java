@@ -3,9 +3,7 @@ package nl.johnvanweel.particlefilters.actor.agent.particle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RecursiveTask;
 
 /**
@@ -32,24 +30,37 @@ public class SuccessorStatePredictor extends RecursiveTask<List<Particle>> {
     @Override
     protected List<Particle> compute() {
         if (particleList.size() <= 500) {
-            List<Particle> particleListPrime = new ArrayList<>();
-
-            for (int i = 0; i < particleList.size(); i++) {
-                Particle p = particleList.get(i);
-
-                Particle pPrime = new Particle(p.getX() + dX + (random.nextInt(10) - 5), p.getY() + (random.nextInt(10) - 5) + dY, p.getWeight());
-
-                if (isParticleOutOfArea(pPrime)) {
-                    pPrime = createRandomParticle(p.getWeight());
-                }
-
-                particleListPrime.add(pPrime);
-            }
-
-            return particleListPrime;
+            return calculateSuccessorStates();
         } else {
             return splitTasks();
         }
+    }
+
+    private List<Particle> calculateSuccessorStates() {
+        List<Particle> particleListPrime = new ArrayList<>();
+
+        for (int i = 0; i < particleList.size(); i++) {
+            Particle p = particleList.get(i);
+
+            Particle pPrime = new Particle(p.getX() + dX + (random.nextInt(10) - 5), p.getY() + (random.nextInt(10) - 5) + dY, p.getWeight());
+
+            if (isParticleOutOfArea(pPrime)) {
+                pPrime = createRandomParticle(p.getWeight());
+            }
+
+            particleListPrime.add(pPrime);
+        }
+
+        return particleListPrime;
+    }
+
+    private Particle createRandomParticle(double weight) {
+        Particle p = new Particle(random.nextInt(WIDTH), random.nextInt(HEIGHT), weight);
+        return p;
+    }
+
+    private boolean isParticleOutOfArea(Particle pPrime) {
+        return pPrime.getX() > WIDTH + WIDTH / 10 || pPrime.getY() > HEIGHT + HEIGHT / 10;
     }
 
     private List<Particle> splitTasks() {
@@ -73,12 +84,5 @@ public class SuccessorStatePredictor extends RecursiveTask<List<Particle>> {
         return left;
     }
 
-    private Particle createRandomParticle(double weight) {
-        Particle p = new Particle(random.nextInt(WIDTH), random.nextInt(HEIGHT), weight);
-        return p;
-    }
 
-    private boolean isParticleOutOfArea(Particle pPrime) {
-        return pPrime.getX() > WIDTH + WIDTH / 10 || pPrime.getY() > HEIGHT + HEIGHT / 10;
-    }
 }

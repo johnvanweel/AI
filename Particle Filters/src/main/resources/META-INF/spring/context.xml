@@ -24,10 +24,10 @@
     </bean>
 
 
-    <!--<bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">-->
-        <!--<constructor-arg value="0"/>-->
-        <!--<constructor-arg value="0"/>-->
-    <!--</bean>-->
+    <bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
+        <constructor-arg value="0"/>
+        <constructor-arg value="0"/>
+    </bean>
 
     <bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
         <constructor-arg value="1"/>
