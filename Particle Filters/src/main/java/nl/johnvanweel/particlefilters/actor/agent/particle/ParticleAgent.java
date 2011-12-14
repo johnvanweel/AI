@@ -1,5 +1,6 @@
-package nl.johnvanweel.particlefilters.actor.agent;
+package nl.johnvanweel.particlefilters.actor.agent.particle;
 
+import nl.johnvanweel.particlefilters.actor.agent.IAgent;
 import nl.johnvanweel.particlefilters.actor.sensor.ISensor;
 import nl.johnvanweel.particlefilters.actor.sensor.data.SensorData;
 import nl.johnvanweel.particlefilters.ui.WorldPanel;
@@ -52,22 +53,21 @@ public class ParticleAgent implements IAgent {
         return particles;
     }
 
-    public void render(Graphics g) {
+    public synchronized void render(Graphics g) {
         for (Particle p : particleList) {
             p.render(g);
         }
     }
 
     @Override
-    public void assessMovement(int dX, int dY, SensorData[] sensorData) {
-        synchronized (particleList) {
-            double eta = calculateEta(sensorData);
-            List<Particle> particleListPrime = predictSuccessorStates(dX, dY);
-            computeWeights(sensorData, eta, particleListPrime);
-            particleListPrime = sampleNewParticleList(particleListPrime);
+    public synchronized void assessMovement(int dX, int dY, SensorData[] sensorData) {
+        double eta = calculateEta(sensorData);
+        List<Particle> particleListPrime = predictSuccessorStates(this.particleList, dX, dY);
+        computeWeights(sensorData, eta, particleListPrime);
+        particleListPrime = sampleNewParticleList(particleListPrime);
 
-            replaceParticles(particleListPrime);
-        }
+        replaceParticles(particleListPrime);
+
     }
 
     private void replaceParticles(List<Particle> particleListPrime) {
@@ -121,22 +121,7 @@ public class ParticleAgent implements IAgent {
         return z;
     }
 
-    private List<Particle> predictSuccessorStates(int dX, int dY) {
-        List<Particle> particleListPrime = new ArrayList<>();
-        for (int i = 0; i < particleList.size(); i++) {
-            Particle p = particleList.get(i);
 
-            Particle pPrime = new Particle(p.getX() + dX + (random.nextInt(10) - 5), p.getY() + (random.nextInt(10) - 5) + dY, p.getWeight());
-
-            if (isParticleOutOfArea(pPrime)) {
-                pPrime = createRandomParticle(p.getWeight());
-            }
-
-            particleListPrime.add(pPrime);
-        }
-
-        return particleListPrime;
-    }
 
     private Particle createRandomParticle(double weight) {
         Particle p = new Particle(random.nextInt(WIDTH), random.nextInt(HEIGHT), weight);

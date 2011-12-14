@@ -1,4 +1,4 @@
-package nl.johnvanweel.particlefilters.actor.agent;
+package nl.johnvanweel.particlefilters.actor.agent.particle;
 
 import nl.johnvanweel.particlefilters.model.WorldMap;
 import nl.johnvanweel.particlefilters.ui.WorldPanel;
