@@ -9,6 +9,7 @@ import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.RecursiveTask;
 
 /**
+ * RecursiveTask capable of calculating the Successor State for a List of Particles.
  * User: John van Weel
  * Date: 12/14/11
  * Time: 4:54 PM
@@ -27,10 +28,6 @@ public class SuccessorStatePredictor extends RecursiveTask<List<Particle>> {
         this.dX = dX;
         this.dY = dY;
     }
-
-//    public List<Particle> predictSuccessorStates() {
-//
-//    }
 
     @Override
     protected List<Particle> compute() {
@@ -51,23 +48,29 @@ public class SuccessorStatePredictor extends RecursiveTask<List<Particle>> {
 
             return particleListPrime;
         } else {
-            int length = particleList.size() / 3;
-
-            List<Particle> left = null;
-            List<Particle> right = null;
-
-            ForkJoinTask<List<Particle>> p1 = new SuccessorStatePredictor(particleList.subList(0, length), dX, dY).fork();
-            ForkJoinTask<List<Particle>> p2 = new SuccessorStatePredictor(particleList.subList(length, length * 2), dX, dY).fork();
-            ForkJoinTask<List<Particle>> p3 = new SuccessorStatePredictor(particleList.subList(length * 2, length * 3), dX, dY).fork();
-
-            left = p1.join();
-            right = p2.join();
-            List<Particle> three = p3.join();
-
-            left.addAll(right);
-            left.addAll(three);
-            return left;
+            return splitTasks();
         }
+    }
+
+    private List<Particle> splitTasks() {
+        int length = particleList.size() / 3;
+
+        List<Particle> left = null;
+        List<Particle> right = null;
+        List<Particle> middle = null;
+
+        ForkJoinTask<List<Particle>> p1 = new SuccessorStatePredictor(particleList.subList(0, length), dX, dY).fork();
+        ForkJoinTask<List<Particle>> p2 = new SuccessorStatePredictor(particleList.subList(length, length * 2), dX, dY).fork();
+        ForkJoinTask<List<Particle>> p3 = new SuccessorStatePredictor(particleList.subList(length * 2, length * 3), dX, dY).fork();
+
+        left = p1.join();
+        middle = p2.join();
+        right = p3.join();
+
+        left.addAll(middle);
+        left.addAll(right);
+
+        return left;
     }
 
     private Particle createRandomParticle(double weight) {

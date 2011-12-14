@@ -79,14 +79,9 @@ public class ParticleAgent implements IAgent {
         try {
             List<Particle> result = p.get();
             return result;
-        } catch (InterruptedException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (ExecutionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (InterruptedException | ExecutionException e) {
+            return new ArrayList<>();
         }
-
-
-        return new ArrayList<>();
     }
 
     private void replaceParticles(List<Particle> particleListPrime) {
