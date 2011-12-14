@@ -15,7 +15,7 @@
         <constructor-arg value="120"/>
     </bean>
 
-    <bean class="nl.johnvanweel.particlefilters.actor.agent.ParticleAgent">
+    <bean class="nl.johnvanweel.particlefilters.actor.agent.particle.ParticleAgent">
         <constructor-arg value="4000"/>
     </bean>
 

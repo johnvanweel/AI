@@ -8,13 +8,13 @@ import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Random;
 
 /**
  * Created by IntelliJ IDEA.
  * User: John van Weel
  * Date: 12/12/11
  * Time: 2:16 PM
- *
  */
 public class WorldPanel extends JPanel implements ActionListener {
     @Autowired
@@ -50,9 +50,21 @@ public class WorldPanel extends JPanel implements ActionListener {
 
                 robot.move(dx, dy);
             }
-
-
         });
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    }
+                    robot.move(new Random().nextInt(3), new Random().nextInt(3));
+                }
+            }
+        }).start();
 
         Timer timer = new Timer(25, this);
         timer.start();

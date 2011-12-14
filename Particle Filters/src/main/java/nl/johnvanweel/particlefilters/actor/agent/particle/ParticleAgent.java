@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ForkJoinPool;
 
 /**
  * Created by IntelliJ IDEA.
@@ -70,6 +72,23 @@ public class ParticleAgent implements IAgent {
 
     }
 
+    private List<Particle> predictSuccessorStates(List<Particle> particleList, int dX, int dY) {
+        SuccessorStatePredictor p = new SuccessorStatePredictor(particleList, dX, dY);
+        ForkJoinPool pool = new ForkJoinPool();
+        pool.execute(p);
+        try {
+            List<Particle> result = p.get();
+            return result;
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ExecutionException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+
+        return new ArrayList<>();
+    }
+
     private void replaceParticles(List<Particle> particleListPrime) {
         particleList.clear();
         particleList.addAll(particleListPrime);
@@ -122,15 +141,11 @@ public class ParticleAgent implements IAgent {
     }
 
 
-
     private Particle createRandomParticle(double weight) {
         Particle p = new Particle(random.nextInt(WIDTH), random.nextInt(HEIGHT), weight);
         return p;
     }
 
-    private boolean isParticleOutOfArea(Particle pPrime) {
-        return pPrime.getX() > WIDTH + WIDTH / 10 || pPrime.getY() > HEIGHT + HEIGHT / 10;
-    }
 
     private double calculateEta(SensorData[] sensorData) {
         double eta = 0D;
