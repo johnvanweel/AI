@@ -39,18 +39,21 @@ public class ParticleAgent implements IAgent {
 
     @PostConstruct
     public void postConstruct() {
-        int width = WIDTH;//panel.getWidth();
-        int height = HEIGHT;//panel.getHeight();
+        this.particleList = seedRandomParticles();
+    }
 
-
+    private List<Particle> seedRandomParticles() {
+        List<Particle> particles = new ArrayList<>();
         Random r = new Random();
         for (int i = 0; i < amountOfParticles; i++) {
-            int x = r.nextInt(width);
-            int y = r.nextInt(height);
+            int x = r.nextInt(WIDTH);
+            int y = r.nextInt(HEIGHT);
 
             Particle p = new Particle(x, y, Double.valueOf((double) 1 / amountOfParticles));
-            particleList.add(p);
+            particles.add(p);
         }
+
+        return particles;
     }
 
     public void render(Graphics g) {
@@ -135,14 +138,15 @@ public class ParticleAgent implements IAgent {
     private double calculateEta(SensorData[] sensorData) {
         double eta = 0D;
         for (Particle p : particleList) {
-            for (SensorData d : sensorData) {
+            eta = getParticleSensorData(sensorData, eta, p);
+        }
+        return eta / sensors.length;
+    }private double getParticleSensorData(SensorData[] sensorData, double eta, Particle p) {
+    for (SensorData d : sensorData) {
                 for (ISensor s : sensors) {
                     eta += d.matchesWith(s.poll(p.getX(), p.getY()));
                 }
-            }
-        }
-        return eta / sensors.length;
-    }
+            }return eta;}
 
 
 }
