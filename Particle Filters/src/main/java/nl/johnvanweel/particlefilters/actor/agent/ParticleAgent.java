@@ -122,7 +122,7 @@ public class ParticleAgent implements IAgent {
 
             Particle pPrime = new Particle(p.getX() + dX + (new Random().nextInt(10) - 5), p.getY() + (new Random().nextInt(10) - 5) + dY, p.getWeight());
 
-            if (pPrime.getX() > HEIGHT+HEIGHT/10 || pPrime.getY() > WIDTH + WIDTH/10){
+            if (pPrime.getX() > WIDTH+WIDTH/10 || pPrime.getY() > HEIGHT+ HEIGHT/10){
                 pPrime = new Particle(new Random().nextInt(WIDTH), new Random().nextInt(HEIGHT), p.getWeight());
             }
 
