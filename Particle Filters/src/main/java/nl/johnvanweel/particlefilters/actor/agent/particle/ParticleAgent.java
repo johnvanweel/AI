@@ -4,14 +4,16 @@ import nl.johnvanweel.particlefilters.actor.agent.IAgent;
 import nl.johnvanweel.particlefilters.actor.sensor.ISensor;
 import nl.johnvanweel.particlefilters.actor.sensor.data.SensorData;
 import nl.johnvanweel.particlefilters.ui.WorldPanel;
+import nl.johnvanweel.particlefilters.util.Centroid;
+import nl.johnvanweel.particlefilters.util.Cluster;
+import nl.johnvanweel.particlefilters.util.DataPoint;
+import nl.johnvanweel.particlefilters.util.JCA;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
 
@@ -52,6 +54,9 @@ public class ParticleAgent implements IAgent {
             particles.add(createRandomParticle((double) 1 / amountOfParticles));
         }
 
+        largestCluster = new Cluster(null);
+        largestCluster.setCentroid(new Centroid(0.0D, 0.0D));
+
         return particles;
     }
 
@@ -59,6 +64,9 @@ public class ParticleAgent implements IAgent {
         for (Particle p : particleList) {
             p.render(g);
         }
+
+        g.setColor(Color.RED);
+        g.drawOval((int) largestCluster.getCentroid().getCx() - (10), (int) largestCluster.getCentroid().getCy() - (10), 10, 10);
     }
 
     @Override
@@ -72,9 +80,33 @@ public class ParticleAgent implements IAgent {
 
     }
 
+    private Point calculatedLocation = new Point(0, 0);
+    private Cluster largestCluster = new Cluster("");
+
     @Override
     public Point getLocation() {
-        return null;
+        return calculatedLocation;
+    }
+
+    private void updateCalculatedLocation() {
+        Vector<DataPoint> v = new Vector<>();
+        for (Particle p : particleList) {
+            if (p.getWeight() > 1 / particleList.size()) {
+                v.add(new DataPoint(p.getX(), p.getY(), p.toString()));
+            }
+        }
+        JCA jca = new JCA(1, 2, v);
+        jca.startAnalysis();
+
+        Cluster largestCluster = null;
+        for (Cluster c : jca.getClusters()) {
+            if (largestCluster == null || largestCluster.getNumDataPoints() < c.getNumDataPoints()) {
+                largestCluster = c;
+            }
+        }
+
+        calculatedLocation = new Point((int) largestCluster.getCentroid().getCx(), (int) largestCluster.getCentroid().getCy());
+        this.largestCluster = largestCluster;
     }
 
     private List<Particle> predictSuccessorStates(List<Particle> particleList, int dX, int dY) {
@@ -92,6 +124,7 @@ public class ParticleAgent implements IAgent {
     private void replaceParticles(List<Particle> particleListPrime) {
         particleList.clear();
         particleList.addAll(particleListPrime);
+        updateCalculatedLocation();
     }
 
     private List<Particle> sampleNewParticleList(List<Particle> particleListPrime) {

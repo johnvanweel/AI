@@ -12,22 +12,22 @@
 
     <bean class="nl.johnvanweel.particlefilters.actor.Robot">
         <constructor-arg>
-            <!--<bean class="nl.johnvanweel.particlefilters.actor.agent.particle.ParticleAgent">-->
-            <!--<constructor-arg value="5000"/>-->
-            <!--<constructor-arg>-->
-            <!--<list>-->
-            <!--<ref bean="baseSensor"/>-->
-            <!--<ref bean="leftSensor"/>-->
-            <!--<ref bean="topSensor"/>-->
-            <!--<ref bean="rightSensor"/>-->
-            <!--<ref bean="downSensor"/>-->
-            <!--</list>-->
-            <!--</constructor-arg>-->
-            <!--</bean>-->
-            <bean class="nl.johnvanweel.particlefilters.actor.agent.CheatingAgent">
-                <constructor-arg value="35"/>
-                <constructor-arg value="20"/>
+            <bean class="nl.johnvanweel.particlefilters.actor.agent.particle.ParticleAgent">
+                <constructor-arg value="2000"/>
+                <constructor-arg>
+                    <list>
+                        <ref bean="baseSensor"/>
+                        <ref bean="leftSensor"/>
+                        <ref bean="topSensor"/>
+                        <ref bean="rightSensor"/>
+                        <ref bean="downSensor"/>
+                    </list>
+                </constructor-arg>
             </bean>
+            <!--<bean class="nl.johnvanweel.particlefilters.actor.agent.CheatingAgent">-->
+                <!--<constructor-arg value="35"/>-->
+                <!--<constructor-arg value="20"/>-->
+            <!--</bean>-->
         </constructor-arg>
         <constructor-arg>
             <list>

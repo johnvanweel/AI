@@ -109,7 +109,11 @@ public class WorldMap {
             Point robotLocation = robots[i].getLocation();
             String robotText = String.format("Robot %s: %s,%s", robots[i], robotLocation.x, robotLocation.y);
 
-            g.drawChars(robotText.toCharArray(), 0, robotText.length(), 10, 10 + 15 * i);
+            g.drawChars(robotText.toCharArray(), 0, robotText.length(), 10, 10 + 15 * (i+1));
+
+            String actualText = String.format("Robot %s actual %s,%s", robots[i],(int) getRobotLocation(robots[i]).getX(), (int)getRobotLocation(robots[i]).getY());
+            g.setColor(Color.GREEN);
+            g.drawChars(actualText.toCharArray(), 0, actualText.length(), 10, 10+30*(i+1));
         }
     }
 }
