@@ -55,23 +55,6 @@ public class WorldPanel extends JPanel implements ActionListener {
             }
         });
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                while (true) {
-//                    try {
-//                        Thread.sleep(10);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-//                    }
-//
-//                    for (int i = 0; i < robots.length; i++) {
-//                        robots[i].move(new Random().nextInt(3), new Random().nextInt(3));
-//                    }
-//                }
-//            }
-//        }).start();
-
         Timer timer = new Timer(25, this);
         timer.start();
     }
@@ -84,17 +67,16 @@ public class WorldPanel extends JPanel implements ActionListener {
 
         g.clearRect(0, 0, width, height);
 
-
-        map.render(g, width, height);
-
         for (Robot r : robots) {
             r.render(g);
         }
+
+        map.render(g, width, height);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        //Toolkit.getDefaultToolkit().sync();
+        Toolkit.getDefaultToolkit().sync();
         repaint();
     }
 }

@@ -15,4 +15,6 @@ public interface IAgent {
     void render(Graphics g);
 
     void assessMovement(int dX, int dY, SensorData[] sensorData);
+
+    Point getLocation();
 }

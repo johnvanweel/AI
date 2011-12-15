@@ -72,6 +72,11 @@ public class ParticleAgent implements IAgent {
 
     }
 
+    @Override
+    public Point getLocation() {
+        return null;
+    }
+
     private List<Particle> predictSuccessorStates(List<Particle> particleList, int dX, int dY) {
         SuccessorStatePredictor p = new SuccessorStatePredictor(particleList, dX, dY);
         ForkJoinPool pool = new ForkJoinPool();

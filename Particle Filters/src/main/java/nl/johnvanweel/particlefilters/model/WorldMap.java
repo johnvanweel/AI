@@ -1,11 +1,12 @@
 package nl.johnvanweel.particlefilters.model;
 
-import nl.johnvanweel.particlefilters.WorldReader;
-import nl.johnvanweel.particlefilters.exception.TileNotFoundException;
+import nl.johnvanweel.particlefilters.actor.Robot;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import java.awt.*;
-import java.io.IOException;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,21 +15,45 @@ import java.util.Arrays;
  * Time: 11:30 AM
  */
 public class WorldMap {
+    @Autowired
+    private Robot[] robots;
+
     private final Tile[] tiles;
     private int amountXTyles = 22;
     private int amountYTyles = 9;
 
+    private Map<Robot, Point> robotLocationMap = new HashMap<>();
+
+    @PostConstruct
+    public void initRobotLocations() {
+        for (Robot r : robots) {
+            robotLocationMap.put(r, new Point(35, 20));
+        }
+    }
+
+    public void moveRobot(Robot r, int xDiff, int yDiff) {
+        Point robotLocation = robotLocationMap.get(r);
+        Tile newTile = getTileAtCoords(robotLocation.x + xDiff, robotLocation.y + yDiff);
+        if (newTile.getType() != TileType.BLOCK) {
+            robotLocation.x += xDiff;
+            robotLocation.y += yDiff;
+        }
+    }
+
+    public Point getRobotLocation(Robot r) {
+        return robotLocationMap.get(r);
+    }
 
     public WorldMap(Tile[] tiles) {
         this.tiles = tiles;
 
-        for (Tile t : tiles){
-            if (amountXTyles < t.getxPos()){
-                  amountXTyles = t.getxPos();
+        for (Tile t : tiles) {
+            if (amountXTyles < t.getxPos()) {
+                amountXTyles = t.getxPos();
             }
 
-            if (amountYTyles < t.getyPos()){
-                  amountYTyles = t.getyPos();
+            if (amountYTyles < t.getyPos()) {
+                amountYTyles = t.getyPos();
             }
         }
     }
@@ -69,11 +94,22 @@ public class WorldMap {
 
     public void render(Graphics g, int width, int height) {
         g.setColor(Color.GRAY);
-        for (Tile tile :getTiles()) {
+        for (Tile tile : getTiles()) {
             if (tile.getType() == TileType.BLOCK) {
                 Rectangle r = getDimension(tile, width, height);
                 g.fillRect((int) r.getX(), (int) r.getY(), (int) r.getWidth(), (int) r.getHeight());
             }
+        }
+
+        for (int i = 0; i < robots.length; i++) {
+            Point loc = getRobotLocation(robots[i]);
+            g.setColor(Color.RED);
+            g.fillOval(loc.x - 10, loc.y - 10, 20, 20);
+
+            Point robotLocation = robots[i].getLocation();
+            String robotText = String.format("Robot %s: %s,%s", robots[i], robotLocation.x, robotLocation.y);
+
+            g.drawChars(robotText.toCharArray(), 0, robotText.length(), 10, 10 + 15 * i);
         }
     }
 }
