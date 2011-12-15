@@ -13,38 +13,86 @@
     <bean class="nl.johnvanweel.particlefilters.actor.Robot">
         <constructor-arg value="35"/>
         <constructor-arg value="120"/>
+        <constructor-arg>
+            <bean class="nl.johnvanweel.particlefilters.actor.agent.particle.ParticleAgent">
+                <constructor-arg value="5000"/>
+                <constructor-arg>
+                    <list>
+                        <ref bean="baseSensor"/>
+                        <ref bean="leftSensor"/>
+                        <ref bean="topSensor"/>
+                        <ref bean="rightSensor"/>
+                        <ref bean="downSensor"/>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="baseSensor"/>
+                <ref bean="leftSensor"/>
+                <ref bean="topSensor"/>
+                <ref bean="rightSensor"/>
+                <ref bean="downSensor"/>
+            </list>
+        </constructor-arg>
     </bean>
 
-    <bean class="nl.johnvanweel.particlefilters.actor.agent.particle.ParticleAgent">
-        <constructor-arg value="5000"/>
+    <bean class="nl.johnvanweel.particlefilters.actor.Robot">
+        <constructor-arg value="35"/>
+        <constructor-arg value="420"/>
+        <constructor-arg>
+            <bean class="nl.johnvanweel.particlefilters.actor.agent.particle.ParticleAgent">
+                <constructor-arg value="5000"/>
+                <constructor-arg>
+                    <list>
+                        <ref bean="baseSensor"/>
+                        <ref bean="leftSensor"/>
+                        <ref bean="topSensor"/>
+                        <ref bean="rightSensor"/>
+                        <ref bean="downSensor"/>
+                    </list>
+                </constructor-arg>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <list>
+                <ref bean="baseSensor"/>
+                <ref bean="leftSensor"/>
+                <ref bean="topSensor"/>
+                <ref bean="rightSensor"/>
+                <ref bean="downSensor"/>
+            </list>
+        </constructor-arg>
     </bean>
+
 
     <bean class="nl.johnvanweel.particlefilters.WorldReader" factory-method="readWorld">
         <constructor-arg value="World1"/>
     </bean>
 
 
-    <bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
+    <bean id="baseSensor" class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
         <constructor-arg value="0"/>
         <constructor-arg value="0"/>
     </bean>
 
-    <bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
+    <bean id="leftSensor" class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
         <constructor-arg value="1"/>
         <constructor-arg value="0"/>
     </bean>
 
-    <bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
+    <bean id="topSensor" class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
         <constructor-arg value="0"/>
         <constructor-arg value="1"/>
     </bean>
 
-    <bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
+    <bean id="rightSensor" class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
         <constructor-arg value="-1"/>
         <constructor-arg value="0"/>
     </bean>
 
-    <bean class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
+    <bean id="downSensor" class="nl.johnvanweel.particlefilters.actor.sensor.AdjecentTileSensor">
         <constructor-arg value="0"/>
         <constructor-arg value="-1"/>
     </bean>

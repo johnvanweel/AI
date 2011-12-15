@@ -32,13 +32,13 @@ public class ParticleAgent implements IAgent {
     @Autowired
     private WorldPanel panel;
 
-    @Autowired
-    private ISensor[] sensors;
+    private final ISensor[] sensors;
 
     private final int amountOfParticles;
 
-    public ParticleAgent(int amount) {
+    public ParticleAgent(int amount, ISensor[] sensors) {
         this.amountOfParticles = amount;
+        this.sensors = sensors;
     }
 
     @PostConstruct

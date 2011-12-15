@@ -21,7 +21,7 @@ public class WorldPanel extends JPanel implements ActionListener {
     private WorldMap map;
 
     @Autowired
-    private Robot robot;
+    private Robot[] robots;
 
 
     @PostConstruct
@@ -48,23 +48,29 @@ public class WorldPanel extends JPanel implements ActionListener {
                         break;
                 }
 
-                robot.move(dx, dy);
+                for (int i = 0; i < robots.length; i++) {
+                    robots[i].move(dx, dy);
+                }
+
             }
         });
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-                    robot.move(new Random().nextInt(3), new Random().nextInt(3));
-                }
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true) {
+//                    try {
+//                        Thread.sleep(10);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+//                    }
+//
+//                    for (int i = 0; i < robots.length; i++) {
+//                        robots[i].move(new Random().nextInt(3), new Random().nextInt(3));
+//                    }
+//                }
+//            }
+//        }).start();
 
         Timer timer = new Timer(25, this);
         timer.start();
@@ -80,7 +86,10 @@ public class WorldPanel extends JPanel implements ActionListener {
 
 
         map.render(g, width, height);
-        robot.render(g);
+
+        for (Robot r : robots) {
+            r.render(g);
+        }
     }
 
     @Override

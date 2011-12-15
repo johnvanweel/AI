@@ -19,18 +19,17 @@ public class Robot {
     @Autowired
     private WorldMap map;
 
-    @Autowired
-    private IAgent agent;
-
-    @Autowired
-    private ISensor[] sensors;
+    private final IAgent agent;
+    private final ISensor[] sensors;
 
     private int xLocation;
     private int yLocation;
 
-    public Robot(int x, int y) {
+    public Robot(int x, int y, IAgent agent, ISensor[] sensors) {
         xLocation = x;
         yLocation = y;
+        this.agent = agent;
+        this.sensors = sensors;
     }
 
     public void move(int xDiff, int yDiff) {
@@ -43,7 +42,7 @@ public class Robot {
     public SensorData[] readSensor() {
         SensorData[] result = new SensorData[sensors.length];
 
-        for (int i = 0; i < sensors.length;i++){
+        for (int i = 0; i < sensors.length; i++) {
             result[i] = sensors[i].poll(xLocation, yLocation);
         }
 
