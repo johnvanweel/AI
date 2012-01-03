@@ -11,7 +11,7 @@ import java.util.Map;
  *
  */
 public enum TileType {
-    SPACE(0), BLOCK(1);
+    SPACE(0), BLOCK(1), REWARD(9);
 
     private final int intValue;
 

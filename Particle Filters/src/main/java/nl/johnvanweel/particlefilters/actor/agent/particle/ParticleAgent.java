@@ -89,12 +89,12 @@ public class ParticleAgent implements IAgent {
     }
 
     private void updateCalculatedLocation() {
+        // TODO CHECK MODULE 6.10 FOR REPLACEMENT
         Vector<DataPoint> v = new Vector<>();
         for (Particle p : particleList) {
-            if (p.getWeight() > 1 / particleList.size()) {
                 v.add(new DataPoint(p.getX(), p.getY(), p.toString()));
-            }
         }
+
         JCA jca = new JCA(1, 2, v);
         jca.startAnalysis();
 

@@ -11,7 +11,7 @@ import java.awt.*;
  *
  */
 public class Tile {
-    private final TileType type;
+    private TileType type;
 
     private final int xPos;
     private final int yPos;
@@ -20,6 +20,10 @@ public class Tile {
         this.type = type;
         this.xPos = xPos;
         this.yPos = yPos;
+    }
+
+    public void setType(TileType type) {
+        this.type = type;
     }
 
     public int getyPos() {

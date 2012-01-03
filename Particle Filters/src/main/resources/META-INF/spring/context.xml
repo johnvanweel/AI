@@ -10,10 +10,12 @@
 
     <bean class="nl.johnvanweel.particlefilters.ui.WorldPanel"/>
 
+    <bean id="driver" class="nl.johnvanweel.particlefilters.actor.driver.AStarDriver"/>
+
     <bean class="nl.johnvanweel.particlefilters.actor.Robot">
         <constructor-arg>
             <bean class="nl.johnvanweel.particlefilters.actor.agent.particle.ParticleAgent">
-                <constructor-arg value="2000"/>
+                <constructor-arg value="500"/>
                 <constructor-arg>
                     <list>
                         <ref bean="baseSensor"/>
@@ -37,6 +39,9 @@
                 <ref bean="rightSensor"/>
                 <ref bean="downSensor"/>
             </list>
+        </constructor-arg>
+        <constructor-arg>
+            <ref bean="driver"/>
         </constructor-arg>
     </bean>
 

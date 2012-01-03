@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,17 +28,45 @@ public class WorldMap {
     @PostConstruct
     public void initRobotLocations() {
         for (Robot r : robots) {
-            robotLocationMap.put(r, new Point(35, 20));
+            robotLocationMap.put(r, new Point(35, 120));
         }
+
+        generateRandomRewardTile();
     }
 
     public void moveRobot(Robot r, int xDiff, int yDiff) {
         Point robotLocation = robotLocationMap.get(r);
+        Tile oldTile = getTileAtCoords(robotLocation.x, robotLocation.y);
         Tile newTile = getTileAtCoords(robotLocation.x + xDiff, robotLocation.y + yDiff);
         if (newTile.getType() != TileType.BLOCK) {
             robotLocation.x += xDiff;
             robotLocation.y += yDiff;
         }
+        
+        if (oldTile != newTile){
+            switch (newTile.getType()){
+                case SPACE:
+                    r.reward(-2);
+                    break;
+                case REWARD:
+                    r.reward(20);
+                    newTile.setType(TileType.SPACE);
+                    generateRandomRewardTile();
+                    break;
+                default:
+                    r.reward(0);
+            }
+        }
+        
+    }
+
+    private void generateRandomRewardTile() {
+        Tile t = null;
+        while (t == null || t.getType() != TileType.SPACE){
+            t = tiles[new Random().nextInt(tiles.length)];
+        }
+        
+        t.setType(TileType.REWARD);
     }
 
     public Point getRobotLocation(Robot r) {
@@ -93,9 +122,13 @@ public class WorldMap {
     }
 
     public void render(Graphics g, int width, int height) {
-        g.setColor(Color.GRAY);
         for (Tile tile : getTiles()) {
             if (tile.getType() == TileType.BLOCK) {
+                g.setColor(Color.GRAY);
+                Rectangle r = getDimension(tile, width, height);
+                g.fillRect((int) r.getX(), (int) r.getY(), (int) r.getWidth(), (int) r.getHeight());
+            } else if (tile.getType() == TileType.REWARD){
+                g.setColor(Color.RED);
                 Rectangle r = getDimension(tile, width, height);
                 g.fillRect((int) r.getX(), (int) r.getY(), (int) r.getWidth(), (int) r.getHeight());
             }
