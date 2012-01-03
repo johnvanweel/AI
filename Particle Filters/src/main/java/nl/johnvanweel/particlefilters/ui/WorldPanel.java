@@ -1,6 +1,7 @@
 package nl.johnvanweel.particlefilters.ui;
 
 import nl.johnvanweel.particlefilters.actor.Robot;
+import nl.johnvanweel.particlefilters.actor.driver.IDriver;
 import nl.johnvanweel.particlefilters.model.WorldMap;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,6 +23,9 @@ public class WorldPanel extends JPanel implements ActionListener {
 
     @Autowired
     private Robot[] robots;
+
+    @Autowired
+    private IDriver[] drivers;
 
 
     @PostConstruct
@@ -46,6 +50,10 @@ public class WorldPanel extends JPanel implements ActionListener {
                     case 39:   //right
                         dx = 10;
                         break;
+                    case 32:
+                        for (IDriver d : drivers){
+                            d.drive();
+                        }
                 }
 
                 for (int i = 0; i < robots.length; i++) {

@@ -24,6 +24,8 @@ public class WorldMap {
     private int amountYTyles = 9;
 
     private Map<Robot, Point> robotLocationMap = new HashMap<>();
+    
+    private Tile rewardTile;
 
     @PostConstruct
     public void initRobotLocations() {
@@ -38,6 +40,9 @@ public class WorldMap {
         Point robotLocation = robotLocationMap.get(r);
         Tile oldTile = getTileAtCoords(robotLocation.x, robotLocation.y);
         Tile newTile = getTileAtCoords(robotLocation.x + xDiff, robotLocation.y + yDiff);
+
+        System.out.println(String.format("%s - %s", oldTile, getTileNorthOf(oldTile)));
+        
         if (newTile.getType() != TileType.BLOCK) {
             robotLocation.x += xDiff;
             robotLocation.y += yDiff;
@@ -59,6 +64,46 @@ public class WorldMap {
         }
         
     }
+    
+    public Tile getTileNorthOf(Tile oldTile){
+        for (Tile tt : tiles){
+            if (tt.getyPos() == oldTile.getyPos()-1 && tt.getxPos() == oldTile.getxPos()){
+                return tt;
+            }
+        }
+
+        return null;
+    }
+
+    public Tile getTileSouthOf(Tile oldTile){
+        for (Tile tt : tiles){
+            if (tt.getyPos() == oldTile.getyPos()+1 && tt.getxPos() == oldTile.getxPos()){
+                return tt;
+            }
+        }
+
+        return null;
+    }
+
+    public Tile getTileEastOf(Tile oldTile){
+        for (Tile tt : tiles){
+            if (tt.getyPos() == oldTile.getyPos() && tt.getxPos() == oldTile.getxPos()+1){
+                return tt;
+            }
+        }
+
+        return null;
+    }
+
+    public Tile getTileWestOf(Tile oldTile){
+        for (Tile tt : tiles){
+            if (tt.getyPos() == oldTile.getyPos() && tt.getxPos() == oldTile.getxPos()-1){
+                return tt;
+            }
+        }
+
+        return null;
+    }
 
     private void generateRandomRewardTile() {
         Tile t = null;
@@ -67,6 +112,8 @@ public class WorldMap {
         }
         
         t.setType(TileType.REWARD);
+        
+        this.rewardTile = t;
     }
 
     public Point getRobotLocation(Robot r) {
@@ -148,5 +195,9 @@ public class WorldMap {
             g.setColor(Color.GREEN);
             g.drawChars(actualText.toCharArray(), 0, actualText.length(), 10, 10+30*(i+1));
         }
+    }
+
+    public Tile getRewardTile() {
+        return rewardTile;
     }
 }

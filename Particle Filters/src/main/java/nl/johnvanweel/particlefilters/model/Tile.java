@@ -37,4 +37,13 @@ public class Tile {
     public TileType getType() {
         return type;
     }
+
+    @Override
+    public String toString() {
+        return "Tile{" +
+                "type=" + type +
+                ", xPos=" + xPos +
+                ", yPos=" + yPos +
+                '}';
+    }
 }

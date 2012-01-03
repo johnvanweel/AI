@@ -33,11 +33,11 @@ public class Robot {
         driver.setRobot(this);
     }
 
-    public void move(final int xDiff, final int yDiff) {
+    public Thread move(final int xDiff, final int yDiff) {
         final int[] xCorrected = {xDiff}; /*+ (new Random().nextInt(2) - 1);*/
         final int[] yCorrected = {yDiff}; /*+ (new Random().nextInt(2) - 1);*/
 
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 int dx = 1;
@@ -72,7 +72,10 @@ public class Robot {
 
                 agent.assessMovement(xDiff, yDiff, readSensor());
             }
-        }).start();
+        });
+        
+        t.start();
+        return t;
 //        world.moveRobot(this, xCorrected, yCorrected);
 //        agent.assessMovement(xDiff, yDiff, readSensor());
     }

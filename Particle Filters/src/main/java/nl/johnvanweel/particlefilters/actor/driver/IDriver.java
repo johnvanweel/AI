@@ -9,4 +9,5 @@ import nl.johnvanweel.particlefilters.actor.Robot;
  */
 public interface IDriver {
     void setRobot(Robot r);
+    void drive();
 }
